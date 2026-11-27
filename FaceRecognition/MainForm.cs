@@ -1,5 +1,4 @@
 using OpenCvSharp;
-using System.Drawing.Imaging;
 
 namespace FaceRecognition;
 
@@ -164,6 +163,7 @@ public sealed class MainForm : Form
         if (current == null || engine == null) return;
         faces = engine.Analyze(current);
         using var annotated = current.Clone();
+        int selection = results.SelectedIndex;
         results.Items.Clear();
         for (int i = 0; i < faces.Length; i++)
         {
@@ -177,7 +177,7 @@ public sealed class MainForm : Form
         var old = preview.Image;
         preview.Image = new Bitmap(bitmap);
         old?.Dispose();
-        if (faces.Length > 0) results.SelectedIndex = 0;
+        if (faces.Length > 0) results.SelectedIndex = Math.Clamp(selection, 0, faces.Length - 1);
         RefreshControls();
     }
 
@@ -207,7 +207,7 @@ public sealed class MainForm : Form
     private void Run(Action action)
     {
         try { action(); }
-        catch (Exception ex) when (ex is OpenCVException or IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException or System.Text.Json.JsonException or TypeInitializationException or DllNotFoundException)
+        catch (Exception ex) when (ex is OpenCVException or IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or InvalidOperationException or System.Text.Json.JsonException or TypeInitializationException or DllNotFoundException)
         {
             StopCamera();
             status.Text = "İşlem yapılamadı: " + ex.Message;

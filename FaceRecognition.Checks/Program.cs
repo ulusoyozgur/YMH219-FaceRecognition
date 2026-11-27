@@ -12,7 +12,7 @@ void Reject(Action action, string name)
 {
     bool rejected = false;
     try { action(); }
-    catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or IOException) { rejected = true; }
+    catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or IOException or InvalidDataException) { rejected = true; }
     Check(rejected, name);
 }
 string folder = Path.Combine(Path.GetTempPath(), "YMH219-FaceChecks-" + Guid.NewGuid());
